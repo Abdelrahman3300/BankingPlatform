@@ -1,0 +1,25 @@
+
+# .NET
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
+
+# Secrets
+.env
+.env.*
+!.env.example
+appsettings.Local.json
+appsettings.*.Local.json
+
+# iOS / Xcode
+**/DerivedData/
+**/build/
+**/*.xcuserstate
+**/xcuserdata/
+**/.DS_Store
+.DS_Store
+
+# Logs
+*.log
