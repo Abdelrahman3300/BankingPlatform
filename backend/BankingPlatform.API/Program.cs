@@ -10,11 +10,10 @@ using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Services
+// Register services
 builder.Services.AddOpenApi();
 builder.Services.AddHealthChecks();
 
-// Application and infrastructure
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -52,11 +51,11 @@ app.MapGet("/api/v1/status", () =>
 });
 
 // Database connectivity endpoint
-app.MapGet("/api/v1/database/check",
+app.MapGet(
+    "/api/v1/database/check",
     async (BankingDbContext dbContext) =>
     {
-        var canConnect =
-            await dbContext.Database.CanConnectAsync();
+        var canConnect = await dbContext.Database.CanConnectAsync();
 
         return Results.Ok(new
         {
@@ -65,7 +64,7 @@ app.MapGet("/api/v1/database/check",
         });
     });
 
-// Register customer endpoint
+// Register customer
 app.MapPost(
     "/api/v1/customers",
     async (
@@ -111,10 +110,83 @@ app.MapPost(
         }
     });
 
+// Get customer by email
+app.MapGet(
+    "/api/v1/customers/by-email/{email}",
+    async (
+        string email,
+        GetCustomerByEmailUseCase useCase,
+        CancellationToken cancellationToken) =>
+    {
+        try
+        {
+            var customer = await useCase.ExecuteAsync(
+                email,
+                cancellationToken);
+
+            if (customer is null)
+            {
+                return Results.NotFound(new
+                {
+                    error = "Customer not found."
+                });
+            }
+
+            return Results.Ok(customer);
+        }
+        catch (DomainException exception)
+        {
+            return Results.BadRequest(new
+            {
+                error = exception.Message
+            });
+        }
+        catch (ArgumentException exception)
+        {
+            return Results.BadRequest(new
+            {
+                error = exception.Message
+            });
+        }
+    });
+
+    
+// Get customer by ID
+app.MapGet(
+    "/api/v1/customers/{id:guid}",
+    async (
+        Guid id,
+        GetCustomerByIdUseCase useCase,
+        CancellationToken cancellationToken) =>
+    {
+        try
+        {
+            var customer = await useCase.ExecuteAsync(
+                id,
+                cancellationToken);
+
+            if (customer is null)
+            {
+                return Results.NotFound(new
+                {
+                    error = "Customer not found."
+                });
+            }
+
+            return Results.Ok(customer);
+        }
+        catch (ArgumentException exception)
+        {
+            return Results.BadRequest(new
+            {
+                error = exception.Message
+            });
+        }
+    });
+
 app.Run();
 
-static bool IsDuplicateCustomerEmail(
-    DbUpdateException exception)
+static bool IsDuplicateCustomerEmail(DbUpdateException exception)
 {
     return exception.InnerException is PostgresException postgresException
         && postgresException.SqlState == PostgresErrorCodes.UniqueViolation

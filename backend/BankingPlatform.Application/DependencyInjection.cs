@@ -9,6 +9,8 @@ public static class DependencyInjection
         this IServiceCollection services)
     {
         services.AddScoped<RegisterCustomerUseCase>();
+        services.AddScoped<GetCustomerByIdUseCase>();
+        services.AddScoped<GetCustomerByEmailUseCase>();
 
         return services;
     }
