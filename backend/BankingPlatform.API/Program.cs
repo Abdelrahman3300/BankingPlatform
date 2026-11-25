@@ -292,6 +292,46 @@ app.MapPost(
         }
     });
 
+// Update customer name
+app.MapPut(
+    "/api/v1/customers/{id:guid}/name",
+    async (
+        Guid id,
+        UpdateCustomerNameRequest request,
+        UpdateCustomerNameUseCase useCase,
+        CancellationToken cancellationToken) =>
+    {
+        try
+        {
+            var customer = await useCase.ExecuteAsync(
+                id,
+                request.FirstName,
+                request.LastName,
+                cancellationToken);
+
+            return customer is null
+                ? Results.NotFound(new
+                {
+                    error = "Customer not found."
+                })
+                : Results.Ok(customer);
+        }
+        catch (DomainException exception)
+        {
+            return Results.BadRequest(new
+            {
+                error = exception.Message
+            });
+        }
+        catch (ArgumentException exception)
+        {
+            return Results.BadRequest(new
+            {
+                error = exception.Message
+            });
+        }
+    });
+    
 app.Run();
 
 static bool IsDuplicateCustomerEmail(DbUpdateException exception)
