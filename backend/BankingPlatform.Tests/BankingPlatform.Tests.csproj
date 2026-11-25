@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <UserSecretsId>968dc0a8-0f9b-4d34-bb85-156bad34a119</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BankingPlatform.Domain\BankingPlatform.Domain.csproj" />
     <ProjectReference Include="..\BankingPlatform.Application\BankingPlatform.Application.csproj" />
+    <ProjectReference Include="..\BankingPlatform.Infrastructure\BankingPlatform.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
