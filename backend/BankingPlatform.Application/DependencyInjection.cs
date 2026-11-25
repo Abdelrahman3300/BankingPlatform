@@ -12,6 +12,9 @@ public static class DependencyInjection
         services.AddScoped<GetCustomerByIdUseCase>();
         services.AddScoped<GetCustomerByEmailUseCase>();
         services.AddScoped<GetCustomersUseCase>();
+        services.AddScoped<ActivateCustomerUseCase>();
+        services.AddScoped<SuspendCustomerUseCase>();
+        services.AddScoped<ReactivateCustomerUseCase>();
         
         return services;
     }

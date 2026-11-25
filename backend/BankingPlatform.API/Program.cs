@@ -211,6 +211,87 @@ app.MapGet(
         }
 });
 
+app.MapPost(
+    "/api/v1/customers/{id:guid}/activate",
+    async (
+        Guid id,
+        ActivateCustomerUseCase useCase,
+        CancellationToken cancellationToken) =>
+    {
+        try
+        {
+            var customer = await useCase.ExecuteAsync(
+                id,
+                cancellationToken);
+
+            return customer is null
+                ? Results.NotFound(new { error = "Customer not found." })
+                : Results.Ok(customer);
+        }
+        catch (DomainException exception)
+        {
+            return Results.BadRequest(new { error = exception.Message });
+        }
+        catch (ArgumentException exception)
+        {
+            return Results.BadRequest(new { error = exception.Message });
+        }
+    });
+
+app.MapPost(
+    "/api/v1/customers/{id:guid}/suspend",
+    async (
+        Guid id,
+        SuspendCustomerUseCase useCase,
+        CancellationToken cancellationToken) =>
+    {
+        try
+        {
+            var customer = await useCase.ExecuteAsync(
+                id,
+                cancellationToken);
+
+            return customer is null
+                ? Results.NotFound(new { error = "Customer not found." })
+                : Results.Ok(customer);
+        }
+        catch (DomainException exception)
+        {
+            return Results.BadRequest(new { error = exception.Message });
+        }
+        catch (ArgumentException exception)
+        {
+            return Results.BadRequest(new { error = exception.Message });
+        }
+    });
+
+    app.MapPost(
+    "/api/v1/customers/{id:guid}/reactivate",
+    async (
+        Guid id,
+        ReactivateCustomerUseCase useCase,
+        CancellationToken cancellationToken) =>
+    {
+        try
+        {
+            var customer = await useCase.ExecuteAsync(
+                id,
+                cancellationToken);
+
+            return customer is null
+                ? Results.NotFound(new { error = "Customer not found." })
+                : Results.Ok(customer);
+        }
+        catch (DomainException exception)
+        {
+            return Results.BadRequest(new { error = exception.Message });
+        }
+        catch (ArgumentException exception)
+        {
+            return Results.BadRequest(new { error = exception.Message });
+        }
+    });
+
 app.Run();
 
 static bool IsDuplicateCustomerEmail(DbUpdateException exception)
