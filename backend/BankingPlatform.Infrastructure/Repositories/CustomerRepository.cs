@@ -54,4 +54,27 @@ public class CustomerRepository : ICustomerRepository
             customer,
             cancellationToken);
     }
+
+    public async Task<(IReadOnlyList<Customer> Customers, int TotalCount)>
+    GetPagedAsync(
+        int pageNumber,
+        int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        var query = _dbContext.Customers.AsNoTracking();
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var customers = await query
+            .OrderByDescending(customer => customer.CreatedAtUtc)
+            .ThenBy(customer => customer.Id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return (customers, totalCount);
+    }
 }
+
+
+

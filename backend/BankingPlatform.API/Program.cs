@@ -184,6 +184,33 @@ app.MapGet(
         }
     });
 
+    // Get customers with pagination
+app.MapGet(
+    "/api/v1/customers",
+    async (
+        int? pageNumber,
+        int? pageSize,
+        GetCustomersUseCase useCase,
+        CancellationToken cancellationToken) =>
+    {
+        try
+        {
+            var result = await useCase.ExecuteAsync(
+                pageNumber ?? 1,
+                pageSize ?? 10,
+                cancellationToken);
+
+            return Results.Ok(result);
+        }
+        catch (ArgumentOutOfRangeException exception)
+        {
+            return Results.BadRequest(new
+            {
+                error = exception.Message
+            });
+        }
+});
+
 app.Run();
 
 static bool IsDuplicateCustomerEmail(DbUpdateException exception)

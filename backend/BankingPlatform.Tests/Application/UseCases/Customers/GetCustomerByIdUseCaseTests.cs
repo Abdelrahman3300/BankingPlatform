@@ -127,11 +127,22 @@ public sealed class GetCustomerByIdUseCaseTests
             return Task.FromResult(false);
         }
 
-        public Task AddAsync(
-            Customer customer,
-            CancellationToken cancellationToken = default)
-        {
-            return Task.CompletedTask;
-        }
+       public Task AddAsync(
+    Customer customer,
+    CancellationToken cancellationToken = default)
+{
+    return Task.CompletedTask;
+}
+
+public Task<(IReadOnlyList<Customer> Customers, int TotalCount)>
+    GetPagedAsync(
+        int pageNumber,
+        int pageSize,
+        CancellationToken cancellationToken = default)
+{
+    return Task.FromResult<
+        (IReadOnlyList<Customer> Customers, int TotalCount)>(
+        (Array.Empty<Customer>(), 0));
+}
     }
 }

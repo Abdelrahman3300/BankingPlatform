@@ -21,4 +21,10 @@ public interface ICustomerRepository
     Task AddAsync(
         Customer customer,
         CancellationToken cancellationToken = default);
+
+    Task<(IReadOnlyList<Customer> Customers, int TotalCount)>
+        GetPagedAsync(
+            int pageNumber,
+            int pageSize,
+            CancellationToken cancellationToken = default);
 }

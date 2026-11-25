@@ -11,7 +11,8 @@ public static class DependencyInjection
         services.AddScoped<RegisterCustomerUseCase>();
         services.AddScoped<GetCustomerByIdUseCase>();
         services.AddScoped<GetCustomerByEmailUseCase>();
-
+        services.AddScoped<GetCustomersUseCase>();
+        
         return services;
     }
 }
