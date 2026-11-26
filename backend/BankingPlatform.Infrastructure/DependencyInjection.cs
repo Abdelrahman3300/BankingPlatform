@@ -2,6 +2,7 @@
 using BankingPlatform.Application.Abstractions;
 using BankingPlatform.Infrastructure.Persistence;
 using BankingPlatform.Infrastructure.Repositories;
+using BankingPlatform.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,8 @@ public static class DependencyInjection
             options.UseNpgsql(connectionString));
 
         services.AddScoped<ICustomerRepository, CustomerRepository>();
+        services.AddScoped<IAccountRepository, AccountRepository>();
+        services.AddSingleton<IAccountNumberGenerator, AccountNumberGenerator>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;

@@ -99,6 +99,15 @@ public class Customer
         UpdatedAtUtc = DateTime.UtcNow;
     }
 
+    public void EnsureCanOpenAccount()
+    {
+        if (Status != CustomerStatus.Active)
+        {
+            throw new DomainException(
+                "Only active customers can open accounts.");
+        }
+    }
+
     public void UpdateName(
         string firstName,
         string lastName)

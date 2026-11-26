@@ -5,6 +5,7 @@ using BankingPlatform.Application.UseCases.Customers;
 using BankingPlatform.Domain.Exceptions;
 using BankingPlatform.Infrastructure;
 using BankingPlatform.Infrastructure.Persistence;
+using BankingPlatform.Application.UseCases.Accounts;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
@@ -331,6 +332,58 @@ app.MapPut(
             });
         }
     });
+
+
+// Open a new bank account
+app.MapPost(
+    "/api/v1/accounts",
+    async (
+        OpenAccountRequest request,
+        OpenAccountUseCase useCase,
+        CancellationToken cancellationToken) =>
+    {
+        try
+        {
+            var account = await useCase.ExecuteAsync(
+                request,
+                cancellationToken);
+
+            if (account is null)
+            {
+                return Results.NotFound(new
+                {
+                    error = "Customer not found."
+                });
+            }
+
+            return Results.Created(
+                $"/api/v1/accounts/{account.Id}",
+                account);
+        }
+        catch (DomainException exception)
+        {
+            return Results.BadRequest(new
+            {
+                error = exception.Message
+            });
+        }
+        catch (ArgumentException exception)
+        {
+            return Results.BadRequest(new
+            {
+                error = exception.Message
+            });
+        }
+        catch (DbUpdateException exception)
+            when (IsDuplicateAccountNumber(exception))
+        {
+            return Results.Conflict(new
+            {
+                error = "Account number collision. Please retry the request."
+            });
+        }
+    });
+
     
 app.Run();
 
@@ -339,6 +392,13 @@ static bool IsDuplicateCustomerEmail(DbUpdateException exception)
     return exception.InnerException is PostgresException postgresException
         && postgresException.SqlState == PostgresErrorCodes.UniqueViolation
         && postgresException.ConstraintName == "ix_customers_email";
+}
+
+static bool IsDuplicateAccountNumber(DbUpdateException exception)
+{
+    return exception.InnerException is PostgresException postgresException
+        && postgresException.SqlState == PostgresErrorCodes.UniqueViolation
+        && postgresException.ConstraintName == "ix_accounts_account_number";
 }
 
 public partial class Program { }

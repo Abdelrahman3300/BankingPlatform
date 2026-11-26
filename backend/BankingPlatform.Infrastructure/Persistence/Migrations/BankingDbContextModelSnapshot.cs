@@ -23,6 +23,45 @@ namespace BankingPlatform.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("BankingPlatform.Domain.Entities.Account", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AccountNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountNumber")
+                        .IsUnique()
+                        .HasDatabaseName("ix_accounts_account_number");
+
+                    b.HasIndex("CustomerId")
+                        .HasDatabaseName("ix_accounts_customer_id");
+
+                    b.ToTable("accounts", "banking");
+                });
+
             modelBuilder.Entity("BankingPlatform.Domain.Entities.Customer", b =>
                 {
                     b.Property<Guid>("Id")
@@ -60,6 +99,16 @@ namespace BankingPlatform.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_customers_email");
 
                     b.ToTable("customers", "identity");
+                });
+
+            modelBuilder.Entity("BankingPlatform.Domain.Entities.Account", b =>
+                {
+                    b.HasOne("BankingPlatform.Domain.Entities.Customer", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_accounts_customers_customer_id");
                 });
 #pragma warning restore 612, 618
         }

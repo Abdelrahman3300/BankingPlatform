@@ -202,4 +202,54 @@ public class CustomerTests
         Assert.Throws<DomainException>(() =>
             customer.Reactivate());
     }
+
+    [Fact]
+    public void EnsureCanOpenAccount_WhenCustomerIsActive_ShouldNotThrow()
+    {
+        // Arrange
+        var customer = CreateCustomer();
+        customer.Activate();
+
+        // Act & Assert
+        var exception = Record.Exception(() =>
+            customer.EnsureCanOpenAccount());
+
+        Assert.Null(exception);
+    }
+
+    [Fact]
+    public void EnsureCanOpenAccount_WhenCustomerIsPending_ShouldThrowDomainException()
+    {
+        // Arrange
+        var customer = CreateCustomer();
+
+        // Act & Assert
+        Assert.Throws<DomainException>(() =>
+            customer.EnsureCanOpenAccount());
+    }
+
+    [Fact]
+    public void EnsureCanOpenAccount_WhenCustomerIsSuspended_ShouldThrowDomainException()
+    {
+        // Arrange
+        var customer = CreateCustomer();
+        customer.Activate();
+        customer.Suspend();
+
+        // Act & Assert
+        Assert.Throws<DomainException>(() =>
+            customer.EnsureCanOpenAccount());
+    }
+
+    [Fact]
+    public void EnsureCanOpenAccount_WhenCustomerIsClosed_ShouldThrowDomainException()
+    {
+        // Arrange
+        var customer = CreateCustomer();
+        customer.Close();
+
+        // Act & Assert
+        Assert.Throws<DomainException>(() =>
+            customer.EnsureCanOpenAccount());
+    }
 }

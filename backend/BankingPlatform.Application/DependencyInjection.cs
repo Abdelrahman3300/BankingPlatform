@@ -1,5 +1,7 @@
 using BankingPlatform.Application.UseCases.Customers;
+using BankingPlatform.Application.UseCases.Accounts;
 using Microsoft.Extensions.DependencyInjection;
+
 
 namespace BankingPlatform.Application;
 
@@ -16,6 +18,7 @@ public static class DependencyInjection
         services.AddScoped<SuspendCustomerUseCase>();
         services.AddScoped<ReactivateCustomerUseCase>();
         services.AddScoped<UpdateCustomerNameUseCase>();
+        services.AddScoped<OpenAccountUseCase>();
 
         return services;
     }
